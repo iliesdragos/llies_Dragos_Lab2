@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using llies_Dragos_Lab2.Data;
 using llies_Dragos_Lab2.Models;
+using llies_Dragos_Lab2.Models.ViewModels;
 
 namespace llies_Dragos_Lab2.Pages.Categories
 {
@@ -20,12 +21,27 @@ namespace llies_Dragos_Lab2.Pages.Categories
         }
 
         public IList<Category> Category { get;set; } = default!;
-
-        public async Task OnGetAsync()
+        public CategoriesIndexData CategoryData { get; set; }
+        public int CategoryID { get; set; }
+        public int BookID { get; set; }
+        public async Task OnGetAsync(int? id, int? bookID)
         {
-            if (_context.Category != null)
+            CategoryData = new CategoriesIndexData();
+            CategoryData.Categories = await _context.Category
+                .Include(i => i.Books)
+                    .ThenInclude(c => c.Author)
+                .OrderBy(i => i.CategoryName)
+                .ToListAsync();
+
+            if (id != null)
             {
-                Category = await _context.Category.ToListAsync();
+                CategoryID = id.Value;
+                Category category = CategoryData.Categories
+                    .Where(i => i.ID == id.Value).Single();
+                if (category != null)
+                {
+                    CategoryData.Books = category.Books;
+                }
             }
         }
     }

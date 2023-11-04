@@ -1,4 +1,6 @@
-﻿namespace llies_Dragos_Lab2.Models
+﻿using static System.Reflection.Metadata.BlobBuilder;
+
+namespace llies_Dragos_Lab2.Models
 {
     public class BookCategory
     {
